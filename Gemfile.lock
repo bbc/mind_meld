@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    mind_meld (0.0.1)
+      activesupport (~> 4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -39,6 +45,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
+  mind_meld!
   rspec (~> 3.3)
   webmock (~> 1.21)
