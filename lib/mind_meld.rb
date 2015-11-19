@@ -15,7 +15,7 @@ class MindMeld
   private
   def post call, params = {}
     begin
-      JSON.parse(@http.request_post("/#{call}.json", params.to_query).body)
+      JSON.parse(@http.request_post("/api/#{call}.json", params.to_query).body)
     rescue StandardError => e
       puts e.message
       { error: e.message }

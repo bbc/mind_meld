@@ -11,13 +11,13 @@ describe MindMeld do
   let(:api) { MindMeld.new(url: 'http://test.server/') }
 
   before(:each) do
-    stub_request(:post, 'http://test.server/devices/register.json').
+    stub_request(:post, 'http://test.server/api/devices/register.json').
       with(body: 'device%5Bname%5D=First+device').
       to_return(
         status: 200,
         body: '{ "id": 1 }'
       )
-    stub_request(:post, 'http://test.server/devices/register.json').
+    stub_request(:post, 'http://test.server/api/devices/register.json').
       with(body: 'device%5Bname%5D=Second+device').
       to_return(
         status: 200,
