@@ -14,7 +14,12 @@ class MindMeld
     post 'devices/register', { device: options }
   end
 
+  def poll options
+    put 'devices/poll', { device: options }
+  end
+
   private
+
   def post call, params = {}
     if @http
       begin
@@ -25,6 +30,15 @@ class MindMeld
       end
     else
       { error: 'Mind Meld not configured' }
+    end
+  end
+
+  def put(call, params={})
+    begin
+      JSON.parse(@http.request_put("/api/#{call}.json", params.to_query).body)
+    rescue StandardError => e
+      puts e.message
+      { error: e.message }
     end
   end
 end
