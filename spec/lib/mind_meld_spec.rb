@@ -23,6 +23,13 @@ describe MindMeld do
         status: 200,
         body: '{ "id": 2 }'
       )
+    stub_request(:put, 'http://test.server/api/devices/poll.json').
+      with(:body => "device%5Bname%5D=First+device").
+      to_return(
+        :status => 200,
+        :body => '[]'
+      )
+
   end
 
   describe '#register' do
@@ -33,6 +40,13 @@ describe MindMeld do
     it 'returns the id of a device' do
       expect(api.register( device1 )['id']).to eq 1
       expect(api.register( device2 )['id']).to eq 2
+    end
+  end
+
+  describe '#poll' do
+    it 'polls a valid device' do
+      api.register(device1)
+      expect(api.poll(device1)).to eq []
     end
   end
 end
