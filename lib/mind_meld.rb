@@ -11,34 +11,25 @@ class MindMeld
   end
 
   def register options
-    post 'devices/register', { device: options }
+    request :post, 'devices/register', { device: options }
   end
 
   def poll options
-    put 'devices/poll', { device: options }
+    request :put, 'devices/poll', { device: options }
   end
 
   private
 
-  def post call, params = {}
+  def request type, call, params = {}
     if @http
       begin
-        JSON.parse(@http.request_post("/api/#{call}.json", params.to_query).body)
-      rescue StandardError => e
+        JSON.parse(@http.send("request_#{type}", "/api/#{call}.json", params.to_query).body)
+      rescue => e
         puts e.message
         { error: e.message }
       end
     else
       { error: 'Mind Meld not configured' }
-    end
-  end
-
-  def put(call, params={})
-    begin
-      JSON.parse(@http.request_put("/api/#{call}.json", params.to_query).body)
-    rescue StandardError => e
-      puts e.message
-      { error: e.message }
     end
   end
 end
