@@ -130,7 +130,13 @@ describe MindMeld do
           body: '{}'
         )
       stub_request(:put, 'http://test.server/api/devices/poll.json').
-        with(body: 'poll%5Bdevices%5D%5B%5D=76&poll%5Bid%5D=76').
+        with(body: 'poll%5Bdevices%5D%5B%5D=123&poll%5Bid%5D=76').
+        to_return(
+          status: 200,
+          body: '{}'
+        )
+      stub_request(:put, "http://test.server/api/devices/poll.json").
+        with(:body => "poll%5Bdevices%5D%5B%5D=123&poll%5Bdevices%5D%5B%5D=364&poll%5Bdevices%5D%5B%5D=7&poll%5Bid%5D=76").
         to_return(
           status: 200,
           body: '{}'
@@ -143,6 +149,10 @@ describe MindMeld do
 
     it 'polls another device' do
       expect(api.poll(123)).to eq({})
+    end
+
+    it 'polls multiple devices' do
+      expect(api.poll(123, 364, 7)).to eq({})
     end
   end
 end

@@ -23,10 +23,11 @@ class MindMeld
     request :post, 'devices/register', { device: options }
   end
 
-  def poll dev_id = nil
+  def poll *dev_ids
     args = {
-      poll: dev_id ? { id: self.id, devices: [ self.id ] } : { id: self.id }
+      poll: dev_ids.length > 0 ? { id: self.id, devices: dev_ids } : { id: self.id }
     }
+puts args
     request :put, 'devices/poll', args
   end
 
