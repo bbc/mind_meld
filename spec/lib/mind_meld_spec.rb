@@ -8,9 +8,21 @@ describe MindMeld do
   let(:device2) {
     { name: 'Second device' }
   }
-  let(:api) { MindMeld.new(url: 'http://test.server/') }
+  let(:api) { MindMeld.new(
+      url: 'http://test.server/',
+      device: {
+        name: 'Controlling device'
+      }
+    )
+  }
 
   before(:each) do
+    stub_request(:post, 'http://test.server/api/devices/register.json').
+      with(body: 'device%5Bname%5D=Controlling+device').
+      to_return(
+        status: 200,
+        body: '{ "id": 876 }'
+      )
     stub_request(:post, 'http://test.server/api/devices/register.json').
       with(body: 'device%5Bname%5D=First+device').
       to_return(
@@ -43,10 +55,94 @@ describe MindMeld do
     end
   end
 
+  describe '#id' do
+    let(:api) {
+                MindMeld.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Test host',
+                              }
+                            )
+              }
+    let(:api_fail) {
+                MindMeld.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Test host fail',
+                              }
+                            )
+              }
+    before(:each) do
+      stub_request(:post, 'http://test.server/api/devices/register.json').
+        with(body: 'device%5Bname%5D=Test+host').
+        to_return(
+          status: 200,
+          body: '{ "id": 76 }'
+        )
+      stub_request(:post, 'http://test.server/api/devices/register.json').
+        with(body: 'device%5Bname%5D=Test+host+fail').
+        to_return(
+          status: 500
+        )
+    end
+
+    it 'returns the id of the device' do
+      expect(api.id).to eq 76
+    end
+
+    it 'returns nil if device cannot register' do
+      expect(api_fail.id).to be_nil
+    end
+
+    it 'retries registration' do
+      api_fail # Cater for lazy loading
+      stub_request(:post, 'http://test.server/api/devices/register.json').
+        with(body: 'device%5Bname%5D=Test+host+fail').
+        to_return(
+          status: 200,
+          body: '{ "id": 83 }'
+        )
+      expect(api_fail.id).to eq 83
+    end
+  end
+
   describe '#poll' do
-    it 'polls a valid device' do
-      api.register(device1)
-      expect(api.poll(device1)).to eq []
+    let(:api) {
+                MindMeld.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Test host',
+                              }
+                            )
+              }
+
+    before(:each) do
+      stub_request(:post, 'http://test.server/api/devices/register.json').
+        with(body: 'device%5Bname%5D=Test+host').
+        to_return(
+          status: 200,
+          body: '{ "id": 76 }'
+        )
+      stub_request(:put, 'http://test.server/api/devices/poll.json').
+        with(body: 'poll%5Bid%5D=76').
+        to_return(
+          status: 200,
+          body: '{}'
+        )
+      stub_request(:put, 'http://test.server/api/devices/poll.json').
+        with(body: 'poll%5Bdevices%5D%5B%5D=76&poll%5Bid%5D=76').
+        to_return(
+          status: 200,
+          body: '{}'
+        )
+    end
+
+    it 'polls the controlling device' do
+      expect(api.poll).to eq({})
+    end
+
+    it 'polls another device' do
+      expect(api.poll(123)).to eq({})
     end
   end
 end
