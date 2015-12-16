@@ -7,19 +7,31 @@ class MindMeld
     if options[:url]
       uri = URI.parse(options[:url])
       @http = Net::HTTP.new(uri.host, uri.port)
+
+      @device = options[:device]
+
+      # To initialize @id (is this needed?)
+      self.id
     end
+  end
+
+  def id
+    @id ||= register(@device)['id']
   end
 
   def register options
     request :post, 'devices/register', { device: options }
   end
 
-  def poll options
-    request :put, 'devices/poll', { device: options }
+  def poll *dev_ids
+    args = {
+      poll: dev_ids.length > 0 ? { id: self.id, devices: dev_ids } : { id: self.id }
+    }
+puts args
+    request :put, 'devices/poll', args
   end
 
   private
-
   def request type, call, params = {}
     if @http
       begin
