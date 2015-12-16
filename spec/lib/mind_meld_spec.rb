@@ -55,37 +55,37 @@ describe MindMeld do
     end
   end
 
-  describe '#id' do
-    let(:api) {
-                MindMeld.new(
-                              url: 'http://test.server/',
-                              device: {
-                                name: 'Test host',
-                              }
-                            )
-              }
-    let(:api_fail) {
-                MindMeld.new(
-                              url: 'http://test.server/',
-                              device: {
-                                name: 'Test host fail',
-                              }
-                            )
-              }
-    before(:each) do
-      stub_request(:post, 'http://test.server/api/devices/register.json').
-        with(body: 'device%5Bname%5D=Test+host').
-        to_return(
-          status: 200,
-          body: '{ "id": 76 }'
-        )
-      stub_request(:post, 'http://test.server/api/devices/register.json').
-        with(body: 'device%5Bname%5D=Test+host+fail').
-        to_return(
-          status: 500
-        )
-    end
+  let(:api) {
+              MindMeld.new(
+                            url: 'http://test.server/',
+                            device: {
+                              name: 'Test host',
+                            }
+                          )
+            }
+  let(:api_fail) {
+              MindMeld.new(
+                            url: 'http://test.server/',
+                            device: {
+                              name: 'Test host fail',
+                            }
+                          )
+            }
+  before(:each) do
+    stub_request(:post, 'http://test.server/api/devices/register.json').
+      with(body: 'device%5Bname%5D=Test+host').
+      to_return(
+        status: 200,
+        body: '{ "id": 76, "name": "Name returned from server" }'
+      )
+    stub_request(:post, 'http://test.server/api/devices/register.json').
+      with(body: 'device%5Bname%5D=Test+host+fail').
+      to_return(
+        status: 500
+      )
+  end
 
+  describe '#id' do
     it 'returns the id of the device' do
       expect(api.id).to eq 76
     end
@@ -103,6 +103,12 @@ describe MindMeld do
           body: '{ "id": 83 }'
         )
       expect(api_fail.id).to eq 83
+    end
+  end
+
+  describe '#name' do
+    it 'returns the name of the device' do
+      expect(api.name).to eq 'Name returned from server'
     end
   end
 
