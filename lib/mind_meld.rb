@@ -10,13 +10,17 @@ class MindMeld
 
       @device = options[:device]
 
-      # To initialize @id (is this needed?)
-      self.id
+      # To trigger registration (is this needed?)
+      device_details
     end
   end
 
   def id
-    @id ||= register(@device)['id']
+    device_details['id']
+  end
+
+  def name
+    device_details['name']
   end
 
   def register options
@@ -43,5 +47,9 @@ puts args
     else
       { error: 'Mind Meld not configured' }
     end
+  end
+
+  def device_details
+    device_details ||= register(@device)
   end
 end
