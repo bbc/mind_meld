@@ -35,6 +35,10 @@ puts args
     request :put, 'devices/poll', args
   end
 
+  def create_action options
+    request :put, 'devices/action', { device_action: options }
+  end
+
   private
   def request type, call, params = {}
     if @http
