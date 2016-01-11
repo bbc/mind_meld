@@ -161,4 +161,19 @@ describe MindMeld do
       expect(api.poll(123, 364, 7)).to eq({})
     end
   end
+
+  describe '#create_action' do
+    before(:each) do
+      stub_request(:put, 'http://test.server/api/devices/action.json').
+        with(body: 'device_action%5Baction_type%5D=redirect&device_action%5Bbody%5D=http%3A%2F%2Fexample.com').
+        to_return(
+          status: 200,
+          body: '{ }'
+        )
+    end
+
+    it 'submits a new action for a device' do
+      expect(api.create_action(action_type: 'redirect', body: 'http://example.com')).to eq({})
+    end
+  end
 end
