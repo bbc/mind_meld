@@ -1,3 +1,26 @@
 require 'webmock/rspec'
 
 $LOAD_PATH << File.expand_path('../../lib', __FILE__)
+
+RSpec.configure do |config|
+
+  config.before(:each) do
+    stub_request(:post, 'http://test.server/api/devices/register.json').
+      with(body: 'device%5Bdevice_type%5D=Hive&device%5Bname%5D=Generic+Hive').
+      to_return(
+        status: 200,
+        body: '{ "id": 101 }'
+      )
+
+    stub_request(:put, "http://test.server/api/plugin/hive/connect.json").
+      with(body: "connection%5Bdevice_id%5D%5Bdevice%5D=1&connection%5Bhive_id%5D=101").
+      to_return(
+        status: 200, :body => "{}", :headers => {})
+
+    stub_request(:put, "http://test.server/api/plugin/hive/disconnect.json").
+      with(body: "connection%5Bdevice_id%5D%5Bdevice%5D=1&connection%5Bhive_id%5D=101").
+      to_return(
+        status: 200, :body => "{}", :headers => {})
+  end
+
+end
