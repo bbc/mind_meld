@@ -31,12 +31,24 @@ class MindMeld
     args = {
       poll: dev_ids.length > 0 ? { id: self.id, devices: dev_ids } : { id: self.id }
     }
-puts args
-    request :put, 'devices/poll', args
+    response = request :put, 'devices/poll', args
+    if dev_ids.length == 0
+      @device_details = response
+    end
+    response
   end
 
   def create_action options
-    request :put, 'devices/action', { device_action: options }
+    response = request :put, 'devices/action', { device_action: { device_id: self.id }.merge(options) }
+    response
+  end
+
+  def device_details(refresh = false)
+    if refresh or not @device_details or @device_details.has_key? :error
+      @device_details = register(@device)
+    else
+      @device_details
+    end
   end
 
   private
@@ -45,15 +57,10 @@ puts args
       begin
         JSON.parse(@http.send("request_#{type}", "/api/#{call}.json", params.to_query).body)
       rescue => e
-        puts e.message
         { error: e.message }
       end
     else
       { error: 'Mind Meld not configured' }
     end
-  end
-
-  def device_details
-    device_details ||= register(@device)
   end
 end

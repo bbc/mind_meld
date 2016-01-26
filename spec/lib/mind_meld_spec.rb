@@ -93,17 +93,6 @@ describe MindMeld do
     it 'returns nil if device cannot register' do
       expect(api_fail.id).to be_nil
     end
-
-    it 'retries registration' do
-      api_fail # Cater for lazy loading
-      stub_request(:post, 'http://test.server/api/devices/register.json').
-        with(body: 'device%5Bname%5D=Test+host+fail').
-        to_return(
-          status: 200,
-          body: '{ "id": 83 }'
-        )
-      expect(api_fail.id).to eq 83
-    end
   end
 
   describe '#name' do
@@ -129,50 +118,47 @@ describe MindMeld do
           status: 200,
           body: '{ "id": 76 }'
         )
+    end
+
+    it 'polls the controlling device' do
       stub_request(:put, 'http://test.server/api/devices/poll.json').
         with(body: 'poll%5Bid%5D=76').
         to_return(
           status: 200,
           body: '{}'
         )
+      expect(api.poll).to eq({})
+    end
+
+    it 'polls another device' do
       stub_request(:put, 'http://test.server/api/devices/poll.json').
         with(body: 'poll%5Bdevices%5D%5B%5D=123&poll%5Bid%5D=76').
         to_return(
           status: 200,
           body: '{}'
         )
+      expect(api.poll(123)).to eq({})
+    end
+
+    it 'polls multiple devices' do
       stub_request(:put, "http://test.server/api/devices/poll.json").
         with(:body => "poll%5Bdevices%5D%5B%5D=123&poll%5Bdevices%5D%5B%5D=364&poll%5Bdevices%5D%5B%5D=7&poll%5Bid%5D=76").
         to_return(
           status: 200,
           body: '{}'
         )
-    end
-
-    it 'polls the controlling device' do
-      expect(api.poll).to eq({})
-    end
-
-    it 'polls another device' do
-      expect(api.poll(123)).to eq({})
-    end
-
-    it 'polls multiple devices' do
       expect(api.poll(123, 364, 7)).to eq({})
     end
   end
 
   describe '#create_action' do
-    before(:each) do
+    it 'submits a new action for a device' do
       stub_request(:put, 'http://test.server/api/devices/action.json').
-        with(body: 'device_action%5Baction_type%5D=redirect&device_action%5Bbody%5D=http%3A%2F%2Fexample.com').
+        with(body: 'device_action%5Baction_type%5D=redirect&device_action%5Bbody%5D=http%3A%2F%2Fexample.com&device_action%5Bdevice_id%5D=76').
         to_return(
           status: 200,
           body: '{ }'
         )
-    end
-
-    it 'submits a new action for a device' do
       expect(api.create_action(action_type: 'redirect', body: 'http://example.com')).to eq({})
     end
   end
