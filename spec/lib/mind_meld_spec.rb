@@ -93,17 +93,6 @@ describe MindMeld do
     it 'returns nil if device cannot register' do
       expect(api_fail.id).to be_nil
     end
-
-    it 'retries registration' do
-      api_fail # Cater for lazy loading
-      stub_request(:post, 'http://test.server/api/devices/register.json').
-        with(body: 'device%5Bname%5D=Test+host+fail').
-        to_return(
-          status: 200,
-          body: '{ "id": 83 }'
-        )
-      expect(api_fail.id).to eq 83
-    end
   end
 
   describe '#name' do
