@@ -44,10 +44,10 @@ class MindMeld
   end
 
   def device_details(refresh = false)
-    if refresh
+    if refresh or not @device_details or @device_details.has_key? :error
       @device_details = register(@device)
     else
-      @device_details ||= register(@device)
+      @device_details
     end
   end
 
