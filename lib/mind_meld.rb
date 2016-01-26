@@ -29,7 +29,7 @@ class MindMeld
 
   def poll *dev_ids
     args = {
-      poll: dev_ids.length > 0 ? { device_id: self.id, devices: dev_ids } : { id: self.id }
+      poll: dev_ids.length > 0 ? { id: self.id, devices: dev_ids } : { id: self.id }
     }
     response = request :put, 'devices/poll', args
     if dev_ids.length == 0

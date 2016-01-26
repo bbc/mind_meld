@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mind_meld (0.0.5)
+    mind_meld (0.0.6)
       activesupport (~> 4)
 
 GEM
@@ -19,7 +19,7 @@ GEM
     diff-lcs (1.2.5)
     i18n (0.7.0)
     json (1.8.3)
-    minitest (5.8.3)
+    minitest (5.8.4)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
       rspec-expectations (~> 3.3.0)
@@ -48,3 +48,6 @@ DEPENDENCIES
   mind_meld!
   rspec (~> 3.3)
   webmock (~> 1.21)
+
+BUNDLED WITH
+   1.10.6
