@@ -7,6 +7,14 @@ class MindMeld
     if options[:url]
       uri = URI.parse(options[:url])
       @http = Net::HTTP.new(uri.host, uri.port)
+      if options.key?(:pem)
+        pem = File.read(options[:pem])
+        @http.use_ssl = true if uri.scheme == 'https'
+        @http.cert = OpenSSL::X509::Certificate.new(pem)
+        @http.key = OpenSSL::PKey::RSA.new(pem)
+        @http.ca_file = options[:ca_file] if options.key?(:ca_file)
+        @http.verify_mode = options[:verify_mode] if options.key?(:verify_mode)
+      end
 
       @device = options[:device]
 
