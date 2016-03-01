@@ -1,6 +1,6 @@
-require 'mind_meld'
+require 'mind_meld/device'
 
-class MindMeld::Hive < MindMeld
+class MindMeld::Hive < MindMeld::Device
   def initialize options
     options[:device][:device_type] = 'Hive'
     super options

@@ -1,14 +1,14 @@
 require 'spec_helper'
-require 'mind_meld'
+require 'mind_meld/device'
 
-describe MindMeld do
+describe MindMeld::Device do
   let(:device1) {
     { name: 'First device' }
   }
   let(:device2) {
     { name: 'Second device' }
   }
-  let(:api) { MindMeld.new(
+  let(:api) { MindMeld::Device.new(
       url: 'http://test.server/',
       device: {
         name: 'Controlling device'
@@ -56,7 +56,7 @@ describe MindMeld do
   end
 
   let(:api) {
-              MindMeld.new(
+              MindMeld::Device.new(
                             url: 'http://test.server/',
                             device: {
                               name: 'Test host',
@@ -64,7 +64,7 @@ describe MindMeld do
                           )
             }
   let(:api_fail) {
-              MindMeld.new(
+              MindMeld::Device.new(
                             url: 'http://test.server/',
                             device: {
                               name: 'Test host fail',
@@ -103,7 +103,7 @@ describe MindMeld do
 
   describe '#poll' do
     let(:api) {
-                MindMeld.new(
+                MindMeld::Device.new(
                               url: 'http://test.server/',
                               device: {
                                 name: 'Test host',
