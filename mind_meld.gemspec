@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.author = ['Joe Haig']
   s.email = ['joe.haig@bbc.co.uk']
   s.files = Dir['README.md', 'lib/**/*.rb']
-  s.executables = ['mindmeld']
+  s.executables = ['mind_meld']
   s.homepage = 'https://github.org/bbc/mind_meld'
   s.license = 'MIT'
   s.add_runtime_dependency 'activesupport', '~> 4'
