@@ -1,6 +1,7 @@
 require 'json'
 require 'net/http'
 require 'active_support/core_ext/object/to_query'
+require 'openssl'
 
 class MindMeld
   def initialize options
