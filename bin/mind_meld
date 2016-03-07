@@ -6,23 +6,66 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path(
   Pathname.new(__FILE__).realpath
 )
 
+require 'optparse'
+require 'ostruct'
+
 $LOAD_PATH << File.expand_path('../../lib', __FILE__)
 require 'mind_meld'
+require 'mind_meld/device'
 
 url = ENV['HIVEMIND_URL'] || 'http://localhost:3000'
 pem = ENV['HIVEMIND_PEM'] || nil
 ca_file = ENV['HIVEMIND_CAFILE'] || nil
 verify_mode = ENV['HIVEMIND_VERIFY_MODE'] || nil
 
-mm = MindMeld.new(
-      url: url,
-      pem: pem,
-      ca_file: ca_file,
-      verify_mode: verify_mode
-    )
+cmd = ARGV.shift
 
-devs = mm.devices
+class Parser
+  def self.parse(type, opts = {})
+    connection = nil
+    options = OpenStruct.new
 
-devs.each do |dev|
-  puts "#{dev['id']}) #{dev['name']}"
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: mind_meld action"
+      opts.on("-i ID") do |i|
+        connection = MindMeld::Device.new(
+              url: ENV['HIVEMIND_URL'] || 'http://localhost:3000',
+              pem: ENV['HIVEMIND_PEM'] || nil,
+              ca_file: ENV['HIVEMIND_CAFILE'] || nil,
+              verify_mode: ENV['HIVEMIND_VERIFY_MODE'] || nil,
+              device: { id: i }
+            )
+      end
+      opts.on("-t TYPE") { |t| options.action_type = t }
+      opts.on("-b BODY") { |b| options.body = b }
+    end
+
+    opt_parser.parse(opts)
+    return { connection: connection, options: options }
+  end
+end
+
+case cmd
+when 'list'
+  mm = MindMeld.new(
+        url: url,
+        pem: pem,
+        ca_file: ca_file,
+        verify_mode: verify_mode
+      )
+
+  devs = mm.devices
+
+  devs.each do |dev|
+    puts "#{dev['id']}) #{dev['name']}"
+  end
+when 'action'
+  opts = Parser.parse 'action', ARGV
+
+  opts[:connection].create_action( opts[:options].to_h )
+when nil, /^-+/
+  puts "Missing command"
+  puts "(and missing help file)"
+else
+  puts "Unknown command '#{cmd}'"
 end
