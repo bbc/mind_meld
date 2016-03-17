@@ -20,6 +20,10 @@ class MindMeld::Device < MindMeld
     device_details['name']
   end
 
+  def hive_queues
+    device_details['hive_queues'] ? device_details['hive_queues'].map { |hq| hq['name'] } : []
+  end
+
   def register options
     request :post, 'devices/register', { device: options }
   end

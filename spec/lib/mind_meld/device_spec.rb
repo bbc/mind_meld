@@ -17,24 +17,6 @@ describe MindMeld::Device do
   }
 
   before(:each) do
-    stub_request(:post, 'http://test.server/api/devices/register.json').
-      with(body: 'device%5Bname%5D=Controlling+device').
-      to_return(
-        status: 200,
-        body: '{ "id": 876 }'
-      )
-    stub_request(:post, 'http://test.server/api/devices/register.json').
-      with(body: 'device%5Bname%5D=First+device').
-      to_return(
-        status: 200,
-        body: '{ "id": 1 }'
-      )
-    stub_request(:post, 'http://test.server/api/devices/register.json').
-      with(body: 'device%5Bname%5D=Second+device').
-      to_return(
-        status: 200,
-        body: '{ "id": 2 }'
-      )
     stub_request(:put, 'http://test.server/api/devices/poll.json').
       with(:body => "device%5Bname%5D=First+device").
       to_return(
@@ -160,6 +142,33 @@ describe MindMeld::Device do
           body: '{ }'
         )
       expect(api.create_action(action_type: 'redirect', body: 'http://example.com')).to eq({})
+    end
+  end
+
+  describe '#hive_queues' do
+    let(:api) {
+                MindMeld::Device.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'First device',
+                              }
+                            )
+              }
+    let(:api2) {
+                MindMeld::Device.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Second device',
+                              }
+                            )
+              }
+
+    it 'returns a list of hive queues' do
+      expect(api.hive_queues).to match_array(['first_queue', 'second_queue'])
+    end
+
+    it 'returns an empty list of hive queues for nil value' do
+      expect(api2.hive_queues).to eq []
     end
   end
 end
