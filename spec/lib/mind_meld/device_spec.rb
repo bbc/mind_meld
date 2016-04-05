@@ -171,4 +171,64 @@ describe MindMeld::Device do
       expect(api2.hive_queues).to eq []
     end
   end
+
+  describe '#device_details' do
+    let(:api_good) {
+                MindMeld::Device.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Device details test',
+                              }
+                            )
+    }
+    let(:api_bad) {
+                MindMeld::Device.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Device details test',
+                              }
+                            )
+    }
+    let(:api_ugly) {
+                MindMeld::Device.new(
+                              url: 'http://test.server/',
+                              device: {
+                                name: 'Device details test',
+                              }
+                            )
+    }
+    let(:api_with_id) {
+                MindMeld::Device.new(
+                              url: 'http://test.server/',
+                              device: {
+                                id: 236
+                              }
+                            )
+    }
+    before(:each) do
+      api_good.instance_variable_set(:@device_details, { id: 234 })
+      api_bad.instance_variable_set(:@device_details, { })
+      api_ugly.instance_variable_set(:@device_details, { error: 'An error' })
+    end
+
+    it 'returns the cached details' do
+      expect(api_good.device_details).to eq({ id: 234 })
+    end
+
+    it 'refreshes the details without polling' do
+      expect(api_good.device_details(true)).to match_array({ "id" => 234, "comment" => "Details from device endpoint" })
+    end
+
+    it 'registers for missing details' do
+      expect(api_ugly.device_details).to match_array({ "id" => 235, "comment" => 'Details from register' })
+    end
+
+    it 'registers for broken details' do
+      expect(api_ugly.device_details).to match_array({ "id" => 235, "comment" => 'Details from register' })
+    end
+
+    it 'gets details without registering' do
+      expect(api_with_id.device_details(true)).to match_array({ "id" => 236, "comment" => "Details without registering" })
+    end
+  end
 end
