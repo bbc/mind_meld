@@ -68,6 +68,37 @@ RESPONSE
         status: 200,
         body: '{ "id": 2 }'
       )
+    stub_request(:post, 'http://test.server/api/devices/register.json').
+      with(body: 'device%5Bname%5D=Device+details+test').
+      to_return(
+        status: 200,
+        body: <<RESPONSE
+{
+  "id": 235,
+  "comment": "Details from register"
+}
+RESPONSE
+    )
+    stub_request(:get, 'http://test.server/api/devices/234.json').
+      to_return(
+        status: 200,
+        body: <<RESPONSE
+{
+  "id": 234,
+  "comment": "Details from device endpoint"
+}
+RESPONSE
+      )
+    stub_request(:get, 'http://test.server/api/devices/236.json').
+      to_return(
+        status: 200,
+        body: <<RESPONSE
+{
+  "id": 236,
+  "comment": "Details without registering"
+}
+RESPONSE
+      )
   end
 
 end

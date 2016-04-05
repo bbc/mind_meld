@@ -9,6 +9,7 @@ class MindMeld::Device < MindMeld
 
     @device = options[:device]
     # To trigger registration (is this needed?)
+    @device_details = {}
     device_details
   end
 
@@ -45,8 +46,14 @@ class MindMeld::Device < MindMeld
   end
 
   def device_details(refresh = false)
-    if refresh or not @device_details or @device_details.has_key? :error
-      @device_details = register(@device)
+    if refresh || ! @device_details.has_key?(:id)
+      if @device_details.has_key? :id
+        @device_details = request :get, "devices/#{@device_details[:id]}"
+      elsif @device.has_key? :id
+        @device_details = request :get, "devices/#{@device[:id]}"
+      else
+        @device_details = register @device
+      end
     else
       @device_details
     end
