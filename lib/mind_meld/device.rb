@@ -47,19 +47,15 @@ class MindMeld::Device < MindMeld
 
   def device_details(refresh = false)
     if refresh || ! @device_details.has_key?(:id)
-      @device_details = find
+      if @device_details.has_key? :id
+        @device_details = request :get, "devices/#{@device_details[:id]}"
+      elsif @device.has_key? :id
+        @device_details = request :get, "devices/#{@device[:id]}"
+      else
+        @device_details = register @device
+      end
     else
       @device_details
-    end
-  end
-
-  def find
-    if @device_details && @device_details.has_key?(:id)
-      request :get, "devices/#{@device_details[:id]}"
-    elsif @device.has_key? :id
-      request :get, "devices/#{@device[:id]}"
-    else
-      register @device
     end
   end
 end
