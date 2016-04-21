@@ -28,11 +28,12 @@ class MindMeld
   def request type, call, params = {}
     if @http
       begin
-        JSON.parse(@http.send(
+        # Allow for 'array with indifferent access'
+        { reply: JSON.parse(@http.send(
             "request_#{type}",
             "/api/#{call}.json",
             type == :get ? params : params.to_query
-          ).body).with_indifferent_access
+          ).body) }.with_indifferent_access[:reply]
       rescue => e
         { error: e.message }.with_indifferent_access
       end
