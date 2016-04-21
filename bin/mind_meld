@@ -59,7 +59,7 @@ when 'list'
     if devs['status'] == '500'
       puts "Error: #{devs['error']}"
     else
-      puts "Error: Cannot understand respnose"
+      puts "Error: Cannot understand response"
       puts devs
     end
   else
