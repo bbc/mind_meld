@@ -55,9 +55,19 @@ when 'list'
       )
 
   devs = mm.devices
-
-  devs.each do |dev|
-    puts "#{dev['id']}) #{dev['name']}"
+  if devs.is_a? Hash
+    if devs['status'] == '500'
+      puts "Error: #{devs['error']}"
+    else
+      puts "Error: Cannot understand respnose"
+      puts devs
+    end
+  else
+    devs.each do |dev|
+      dev['plugin_type'] =~ /HiveMind(.*)::/
+      type = $1
+      puts "%10s : %4d : %s" % [ type, dev['id'], dev['name'] ]
+    end
   end
 when 'action'
   opts = Parser.parse 'action', ARGV
