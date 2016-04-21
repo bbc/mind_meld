@@ -1,6 +1,5 @@
 require 'json'
 require 'net/http'
-require 'active_support/core_ext/object/to_query'
 require 'mind_meld'
 
 class MindMeld::Device < MindMeld
@@ -9,7 +8,7 @@ class MindMeld::Device < MindMeld
 
     @device = options[:device]
     # To trigger registration (is this needed?)
-    @device_details = {}
+    @device_details = {}.with_indifferent_access
     device_details
   end
 

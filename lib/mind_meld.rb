@@ -1,6 +1,7 @@
 require 'json'
 require 'net/http'
 require 'active_support/core_ext/object/to_query'
+require 'active_support/core_ext/hash/indifferent_access'
 require 'openssl'
 
 class MindMeld
@@ -31,12 +32,12 @@ class MindMeld
             "request_#{type}",
             "/api/#{call}.json",
             type == :get ? params : params.to_query
-          ).body)
+          ).body).with_indifferent_access
       rescue => e
-        { error: e.message }
+        { error: e.message }.with_indifferent_access
       end
     else
-      { error: 'Mind Meld not configured' }
+      { error: 'Mind Meld not configured' }.with_indifferent_access
     end
   end
 end
