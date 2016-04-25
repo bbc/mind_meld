@@ -44,6 +44,13 @@ class MindMeld::Device < MindMeld
     response
   end
 
+  def send_screenshot options
+    encoded = nil
+    encoded = Base64.encode64(File.open(options[:screenshot], "rb").read) if File.exists?(options[:screenshot])
+    response = request :put, 'devices/screenshot', { device_action: { screenshot: encoded, device_id: options[:device_id] } }
+    response
+  end
+
   def device_details(refresh = false)
     if refresh || ! @device_details.has_key?(:id)
       if @device_details.has_key? :id
