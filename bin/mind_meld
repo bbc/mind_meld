@@ -36,8 +36,11 @@ class Parser
               device: { id: i }
             )
       end
-      opts.on("-t TYPE") { |t| options.action_type = t }
-      opts.on("-b BODY") { |b| options.body = b }
+      case type
+      when 'action'
+        opts.on("-t TYPE") { |t| options.action_type = t }
+        opts.on("-b BODY") { |b| options.body = b }
+      end
     end
 
     opt_parser.parse(opts)
@@ -73,6 +76,17 @@ when 'action'
   opts = Parser.parse 'action', ARGV
 
   opts[:connection].create_action( opts[:options].to_h )
+
+when 'details'
+  opts = Parser.parse 'device', ARGV
+  dd = opts[:connection].device_details(view: 'simple')
+  puts "Id: #{dd['id']}"
+  puts "Name: #{dd['name']}"
+  puts "Model: #{dd['model_display_name']} (#{dd['model']})"
+  puts "Brand: #{dd['brand_display_name']} (#{dd['brand']})"
+  puts "Type: #{dd['device_type']}"
+  puts "Serial: #{dd['serial']}"
+  puts "Asset Id: #{dd['asset_id']}"
 when nil, /^-+/
   puts "Missing command"
   puts "(and missing help file)"

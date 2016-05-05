@@ -9,7 +9,7 @@ class MindMeld::Device < MindMeld
     @device = options[:device]
     # To trigger registration (is this needed?)
     @device_details = {}.with_indifferent_access
-    device_details
+    device_details(view: 'simple')
   end
 
   def id

@@ -28,12 +28,22 @@ class MindMeld
   def request type, call, params = {}
     if @http
       begin
+        path = "/api/#{call}.json"
+        params_query = params.to_query
+        # Apparently request_get is inconsistent with request_<everything else>
+        # (Great)
+        case type
+        when :get
+          response = @http.request_get("#{path}?#{params_query}")
+        else
+          response = @http.send(
+              "request_#{type}",
+              path,
+              params_query
+            )
+        end
         # Allow for 'array with indifferent access'
-        { reply: JSON.parse(@http.send(
-            "request_#{type}",
-            "/api/#{call}.json",
-            type == :get ? params : params.to_query
-          ).body) }.with_indifferent_access[:reply]
+        { reply: JSON.parse(response.body) }.with_indifferent_access[:reply]
       rescue => e
         { error: e.message }.with_indifferent_access
       end

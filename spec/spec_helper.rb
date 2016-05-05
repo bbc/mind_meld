@@ -79,7 +79,7 @@ RESPONSE
 }
 RESPONSE
     )
-    stub_request(:get, 'http://test.server/api/devices/234.json').
+    stub_request(:get, 'http://test.server/api/devices/234.json?view=full').
       to_return(
         status: 200,
         body: <<RESPONSE
@@ -89,7 +89,17 @@ RESPONSE
 }
 RESPONSE
       )
-    stub_request(:get, 'http://test.server/api/devices/236.json').
+    stub_request(:get, 'http://test.server/api/devices/236.json?view=simple').
+      to_return(
+        status: 200,
+        body: <<RESPONSE
+{
+  "id": 236,
+  "comment": "Details without registering"
+}
+RESPONSE
+      )
+    stub_request(:get, 'http://test.server/api/devices/236.json?view=full').
       to_return(
         status: 200,
         body: <<RESPONSE
