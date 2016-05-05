@@ -65,7 +65,7 @@ class MindMeld::Device < MindMeld
       if @device_details.has_key? :id
         @device_details = request :get, "devices/#{@device_details[:id]}", { view: view }
       elsif @device.has_key? :id
-        @device_details = request :get, "devices/#{@device[:id]}", { view: 'simple', view: view }
+        @device_details = request :get, "devices/#{@device[:id]}", { view: view }
       else
         @device_details = register @device
       end
