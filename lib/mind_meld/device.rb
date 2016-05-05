@@ -9,7 +9,7 @@ class MindMeld::Device < MindMeld
     @device = options[:device]
     # To trigger registration (is this needed?)
     @device_details = {}.with_indifferent_access
-    device_details
+    device_details(view: 'simple')
   end
 
   def id
@@ -51,12 +51,21 @@ class MindMeld::Device < MindMeld
     response
   end
 
-  def device_details(refresh = false)
+  def device_details(options = {refresh: false})
+    if options.is_a? Hash
+      refresh = options[:refresh] || false
+      view = options[:view] || 'full'
+    else
+      puts "[DEPRECATION WARNING] device_details(true) replaced by device_details(refresh: true) in Mind Meld"
+      refresh = options
+      view = 'full'
+    end
+
     if refresh || ! @device_details.has_key?(:id)
       if @device_details.has_key? :id
-        @device_details = request :get, "devices/#{@device_details[:id]}"
+        @device_details = request :get, "devices/#{@device_details[:id]}", { view: view }
       elsif @device.has_key? :id
-        @device_details = request :get, "devices/#{@device[:id]}"
+        @device_details = request :get, "devices/#{@device[:id]}", { view: view }
       else
         @device_details = register @device
       end

@@ -216,7 +216,7 @@ describe MindMeld::Device do
     end
 
     it 'refreshes the details without polling' do
-      expect(api_good.device_details(true)).to match_array({ "id" => 234, "comment" => "Details from device endpoint" })
+      expect(api_good.device_details(refresh: true)).to match_array({ "id" => 234, "comment" => "Details from device endpoint" })
     end
 
     it 'registers for missing details' do
@@ -228,7 +228,7 @@ describe MindMeld::Device do
     end
 
     it 'gets details without registering' do
-      expect(api_with_id.device_details(true)).to match_array({ "id" => 236, "comment" => "Details without registering" })
+      expect(api_with_id.device_details(refresh: true)).to match_array({ "id" => 236, "comment" => "Details without registering" })
     end
   end
 end
