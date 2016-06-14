@@ -47,7 +47,7 @@ class MindMeld
   private
   def verify_statistics_arguments data
     [:device_id, :label, :value].each do |key|
-      raise ArgumentError, 'Missing Device Id' if ! data.has_key? key
+      raise ArgumentError, 'Missing #{key}' if ! data.has_key? key
     end
   end
 
