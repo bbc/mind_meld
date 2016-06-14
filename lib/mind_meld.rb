@@ -18,13 +18,39 @@ class MindMeld
         @http.verify_mode = options[:verify_mode] if options.key?(:verify_mode)
       end
     end
+
+    @statistics = []
   end
 
   def devices
     request :get, 'devices'
   end
 
+  def add_statistics data
+    if data.is_a? Array
+      data.each do |d|
+        verify_statistics_arguments d
+      end
+      @statistics.concat data
+    else
+      verify_statistics_arguments data
+      @statistics << data
+    end
+  end
+
+  def flush_statistics
+    response = request :post, 'device_statistics/upload', { data: @statistics }
+    @statistics = [] if ! response.has_key? :error
+    response
+  end
+
   private
+  def verify_statistics_arguments data
+    [:device_id, :label, :value].each do |key|
+      raise ArgumentError, 'Missing Device Id' if ! data.has_key? key
+    end
+  end
+
   def request type, call, params = {}
     if @http
       begin
@@ -43,7 +69,9 @@ class MindMeld
             )
         end
         # Allow for 'array with indifferent access'
-        { reply: JSON.parse(response.body) }.with_indifferent_access[:reply]
+        reply = { reply: JSON.parse(response.body) }.with_indifferent_access[:reply]
+        reply[:error] = "Status: #{response.code}" if ! response.kind_of? Net::HTTPSuccess
+        reply
       rescue => e
         { error: e.message }.with_indifferent_access
       end

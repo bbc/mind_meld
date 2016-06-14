@@ -78,7 +78,7 @@ when 'action'
   opts[:connection].create_action( opts[:options].to_h )
 
 when 'details'
-  opts = Parser.parse 'device', ARGV
+  opts = Parser.parse 'details', ARGV
   dd = opts[:connection].device_details(view: 'simple')
   puts "Id: #{dd['id']}"
   puts "Name: #{dd['name']}"
