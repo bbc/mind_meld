@@ -231,4 +231,82 @@ describe MindMeld::Device do
       expect(api_with_id.device_details(refresh: true)).to match_array({ "id" => 236, "comment" => "Details without registering" })
     end
   end
+
+  let(:one_valid_current_device) {
+    {
+      timestamp: '2016-06-07 16:59:01 +0100',
+      label: 'Test key',
+      value: 987.654,
+      format: 'float'
+    }
+  }
+
+  let(:one_valid_other_device) {
+    {
+      device_id: 12345,
+      timestamp: '2016-06-07 16:59:01 +0100',
+      label: 'Test key',
+      value: 987.654,
+      format: 'float'
+    }
+  }
+
+  let(:five_valid) {
+    [
+      {
+        timestamp: '2016-06-07 16:59:37 +0100',
+        label: 'Test key',
+        value: 987.654,
+        format: 'float'
+      },
+      {
+        device_id: 2,
+        timestamp: '2016-06-07 16:43:59 +0100',
+        label: 'Test key 2',
+        value: 66,
+        format: 'integer'
+      },
+      {
+        timestamp: '2016-06-07 16:59:01 +0100',
+        label: 'Test key 3',
+        value: -5.2,
+        format: 'float'
+      },
+      {
+        device_id: 3,
+        timestamp: '2016-06-07 17:59:01 +0100',
+        label: 'Test key',
+        value: 11.22,
+        format: 'float'
+      },
+      {
+        device_id: 3,
+        timestamp: '2016-06-07 18:37:44 +0100',
+        label: 'Test key 3',
+        value: 0.0,
+        format: 'float'
+      }
+    ]
+  }
+
+  describe '#add_statistics' do
+    it 'adds a valid statistic for the current device' do
+      expect{api.add_statistics one_valid_current_device}
+        .to change(api.instance_variable_get(:@statistics), :count).by 1
+      expect(api.instance_variable_get(:@statistics)[-1][:device_id]).to eq api.id
+    end
+
+    it 'adds a valid statistic for another device' do
+      expect{api.add_statistics one_valid_other_device}
+        .to change(api.instance_variable_get(:@statistics), :count).by 1
+      expect(api.instance_variable_get(:@statistics)[-1][:device_id]).to eq 12345
+    end
+
+    it 'adds five valid statistics ' do
+      expect{api.add_statistics five_valid}
+        .to change(api.instance_variable_get(:@statistics), :count).by 5
+      expect(api.instance_variable_get(:@statistics).map{|d| d[:device_id]}).to match_array [api.id, api.id, 2, 3, 3]
+    end
+  end
+
 end
