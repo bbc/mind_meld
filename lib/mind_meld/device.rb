@@ -73,4 +73,18 @@ class MindMeld::Device < MindMeld
       @device_details
     end
   end
+
+  def add_statistics data
+    if ! data.is_a? Array
+      data = [ data ]
+    end
+
+    id = self.id
+    data.each do |d|
+      d[:device_id] = id if ! d[:device_id]
+    end
+
+    super data
+  end
+
 end

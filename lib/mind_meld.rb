@@ -27,15 +27,10 @@ class MindMeld
   end
 
   def add_statistics data
-    if data.is_a? Array
-      data.each do |d|
-        verify_statistics_arguments d
-      end
-      @statistics.concat data
-    else
-      verify_statistics_arguments data
-      @statistics << data
-    end
+    data = [ data ] if ! data.is_a? Array
+
+    verify_statistics_arguments data
+    @statistics.concat data
   end
 
   def flush_statistics
@@ -46,8 +41,13 @@ class MindMeld
 
   private
   def verify_statistics_arguments data
-    [:device_id, :label, :value].each do |key|
-      raise ArgumentError, 'Missing #{key}' if ! data.has_key? key
+    data.each do |d|
+      if ! d.has_key? :timestamp
+        d[:timestamp] = Time.now
+      end
+      [:device_id, :label, :value].each do |key|
+        raise ArgumentError, "Missing #{key}" if ! d.has_key? key
+      end
     end
   end
 
