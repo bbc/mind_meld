@@ -16,7 +16,7 @@ class MindMeld::Hive < MindMeld::Device
 
   def device_details(refresh = false)
     super(refresh)
-    @device_details['connected_devices'] = [] if not @device_details.has_key? 'connected_devices'
+    @device_details['connected_devices'] = [] if not (@device_details.has_key? 'connected_devices' or @device_details.has_key? 'error')
     @device_details
   end
 end
