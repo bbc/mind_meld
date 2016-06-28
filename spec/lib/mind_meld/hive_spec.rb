@@ -24,8 +24,14 @@ describe MindMeld::Hive do
 
   describe "#device_details['connected_devices']" do
     let(:hive_api) { MindMeld::Hive.new(url: 'http://test.server/', device: { name: 'Generic Hive' }) }
+    let(:failed_hive_api) { MindMeld::Hive.new(url: 'http://failing.test.server/', device: { name: 'Generic Hive' }) }
+
     it 'returns an empty string if it is not set' do
       expect(hive_api.device_details['connected_devices']).to eq([])
+    end
+
+    it 'returns nil when there is an error connecting with the database' do
+      expect(failed_hive_api.device_details['connected_devices']).to be_nil
     end
   end
 end

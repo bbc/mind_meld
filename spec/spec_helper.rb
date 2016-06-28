@@ -12,6 +12,12 @@ RSpec.configure do |config|
         body: '{ "id": 101 }'
       )
 
+    stub_request(:post, 'http://failing.test.server/api/devices/register.json').
+      with(body: 'device%5Bdevice_type%5D=Hive&device%5Bname%5D=Generic+Hive').
+      to_return(
+        status: 500
+      )
+
     stub_request(:post, 'http://test.server/api/devices/register.json').
       with(body: 'device%5Bdevice_type%5D=Tv&device%5Bname%5D=Generic+TV').
       to_return(
