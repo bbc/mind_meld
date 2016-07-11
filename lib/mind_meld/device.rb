@@ -21,7 +21,7 @@ class MindMeld::Device < MindMeld
   end
 
   def hive_queues(refresh = false)
-    device_details(refresh)['hive_queues'] ? device_details['hive_queues'].map { |hq| hq['name'] } : []
+    device_details(refresh: refresh)['hive_queues'] ? device_details['hive_queues'].map { |hq| hq['name'] } : []
   end
 
   def register options

@@ -14,8 +14,8 @@ class MindMeld::Hive < MindMeld::Device
     request :put, 'plugin/hive/disconnect', { connection: { hive_id: self.id, device_id: device_id } }
   end
 
-  def device_details(refresh = false)
-    super(refresh)
+  def device_details(options = { refresh: false })
+    super
     @device_details['connected_devices'] = [] if not (@device_details.has_key? 'connected_devices' or @device_details.has_key? 'error')
     @device_details
   end
