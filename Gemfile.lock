@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mind_meld (0.1.8)
+    mind_meld (0.1.10)
       activesupport (~> 4)
 
 GEM
