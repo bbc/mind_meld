@@ -25,7 +25,7 @@ class MindMeld
         @http.ca_file = options[:ca_file] if options.key?(:ca_file)
         @http.verify_mode = options[:verify_mode] if options.key?(:verify_mode)
       elsif options.key?(:pem) and options[:pem]
-        warn "["DEPRECATION"] Key [:pem] is deprecated in Mind Meld. Use [:cert] instead."
+        warn "['DEPRECATION'] Key [:pem] is deprecated in Mind Meld. Use [:cert] instead."
         pem = File.read(options[:pem])
         @http.cert = OpenSSL::X509::Certificate.new(pem)
         @http.key = OpenSSL::PKey::RSA.new(pem)
