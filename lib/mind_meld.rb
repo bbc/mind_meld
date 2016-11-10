@@ -9,11 +9,27 @@ class MindMeld
     if options[:url]
       uri = URI.parse(options[:url])
       @http = Net::HTTP.new(uri.host, uri.port)
-      if options.key?(:pem) and options[:pem]
-        pem = File.read(options[:pem])
+      
+      if options.key?(:cert) and options[:cert]
+        type = options[:cert].split('/').last.split('.').last == "p12" ? "p12" : "pem" 
+        if type == "pem" 
+          pem = File.read(options[:cert])
+          @http.cert = OpenSSL::X509::Certificate.new(pem)
+          @http.key = OpenSSL::PKey::RSA.new(pem)
+        elsif type == "p12" 
+          p12 = OpenSSL::PKCS12.new(File.binread(options[:cert]))
+          @http.cert = p12.certificate
+          @http.key = p12.key
+        end
         @http.use_ssl = true if uri.scheme == 'https'
+        @http.ca_file = options[:ca_file] if options.key?(:ca_file)
+        @http.verify_mode = options[:verify_mode] if options.key?(:verify_mode)
+      elsif options.key?(:pem) and options[:pem]
+        warn "['DEPRECATION'] Key [:pem] is deprecated in Mind Meld. Use [:cert] instead."
+        pem = File.read(options[:pem])
         @http.cert = OpenSSL::X509::Certificate.new(pem)
         @http.key = OpenSSL::PKey::RSA.new(pem)
+        @http.use_ssl = true if uri.scheme == 'https'
         @http.ca_file = options[:ca_file] if options.key?(:ca_file)
         @http.verify_mode = options[:verify_mode] if options.key?(:verify_mode)
       end
