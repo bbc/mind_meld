@@ -91,7 +91,8 @@ class MindMeld::Device < MindMeld
     state_params = {
       device_id: self.id,
       state: 'clear'
-    }.merge options
+    }
+    state_params[:component] = options[:component] if options.has_key? :component
     request :put, 'devices/update_state', { device_state: state_params }
   end
 
