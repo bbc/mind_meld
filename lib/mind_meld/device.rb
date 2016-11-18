@@ -101,7 +101,7 @@ class MindMeld::Device < MindMeld
       { device_state: {
           device_id: self.id,
           state: options[:state] || 'info',
-          component: options[:component],
+          component: options[:component] || '[None]',
           message: options[:message]
         }
       }
