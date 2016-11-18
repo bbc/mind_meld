@@ -24,6 +24,8 @@ describe MindMeld::Device do
         :body => '[]'
       )
 
+    stub_request(:put, "http://test.server/api/devices/update_state.json").
+      to_return( status: 200, body: '[]' )
   end
 
   describe '#register' do
@@ -309,4 +311,27 @@ describe MindMeld::Device do
     end
   end
 
+  describe '#set_status' do
+    it 'successfully adds a status' do
+      expect(api.set_state(component: 'Test component', status: 'info', message: 'Test message')).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
+        with( body: { device_state: {
+                        device_id: api.id.to_s,
+                        state: 'info',
+                        component: 'Test component',
+                        message: 'Test message'
+                      } })
+    end
+  end
+
+  describe '#clear_status' do
+    it 'hits the endpoint for clearing the device status' do
+      expect(api.clear_state).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
+        with( body: { device_state: { device_id: api.id.to_s, state: 'clear' } })
+    end
+
+    it 'hits the endpoint for clearing the device status for a particular component' do
+      expect(api.clear_state(component: 'Test component')).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
+        with( body: { device_state: { device_id: api.id.to_s, component: 'Test component', state: 'clear' } })
+    end
+  end
 end

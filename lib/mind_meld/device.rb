@@ -87,4 +87,23 @@ class MindMeld::Device < MindMeld
     super data
   end
 
+  def clear_state options = {}
+    state_params = {
+      device_id: self.id,
+      state: 'clear'
+    }
+    state_params[:component] = options[:component] if options.has_key? :component
+    request :put, 'devices/update_state', { device_state: state_params }
+  end
+
+  def set_state options
+    request :put, 'devices/update_state',
+      { device_state: {
+          device_id: self.id,
+          state: options[:state] || 'info',
+          component: options[:component] || '[None]',
+          message: options[:message]
+        }
+      }
+  end
 end
