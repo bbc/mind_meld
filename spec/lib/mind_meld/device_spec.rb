@@ -313,7 +313,7 @@ describe MindMeld::Device do
 
   describe '#set_status' do
     it 'successfully adds a status' do
-      expect(api.set_status(component: 'Test component', status: 'info', message: 'Test message')).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
+      expect(api.set_state(component: 'Test component', status: 'info', message: 'Test message')).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
         with( body: { device_state: {
                         device_id: api.id.to_s,
                         state: 'info',
@@ -325,8 +325,13 @@ describe MindMeld::Device do
 
   describe '#clear_status' do
     it 'hits the endpoint for clearing the device status' do
-      expect(api.clear_status).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
+      expect(api.clear_state).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
         with( body: { device_state: { device_id: api.id.to_s, state: 'clear' } })
+    end
+
+    it 'hits the endpoint for clearing the device status for a particular component' do
+      expect(api.clear_state(component: 'Test component')).to have_requested(:put, 'http://test.server/api/devices/update_state.json').
+        with( body: { device_state: { device_id: api.id.to_s, component: 'Test component', state: 'clear' } })
     end
   end
 end

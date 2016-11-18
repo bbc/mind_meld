@@ -87,11 +87,15 @@ class MindMeld::Device < MindMeld
     super data
   end
 
-  def clear_status
-    request :put, 'devices/update_state', { device_state: { device_id: self.id, state: 'clear' } }
+  def clear_state options = {}
+    state_params = {
+      device_id: self.id,
+      state: 'clear'
+    }.merge options
+    request :put, 'devices/update_state', { device_state: state_params }
   end
 
-  def set_status options
+  def set_state options
     request :put, 'devices/update_state',
       { device_state: {
           device_id: self.id,
