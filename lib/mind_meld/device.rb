@@ -92,6 +92,7 @@ class MindMeld::Device < MindMeld
       device_id: self.id,
       state: 'clear'
     }
+    state_params[:level] = options[:level] if options.has_key? :level
     state_params[:component] = options[:component] if options.has_key? :component
     request :put, 'devices/update_state', { device_state: state_params }
   end
