@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'mind_meld'
-  s.version = '0.1.12'
+  s.version = '0.1.13'
   s.date = Time.now.strftime("%Y-%m-%d")
   s.summary = 'API for Hive Mind'
   s.description = 'API for Hive Mind'
